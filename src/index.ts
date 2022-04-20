@@ -20,15 +20,7 @@ export default class NFTTransaction {
   }
 
   public static isDepositOrder(data): boolean {
-    const {
-      fromChain,
-      toChain,
-      from,
-      to,
-      nft, // nft合约地址
-      id, //id 未必是数字
-      depositHash
-    } = data || {};
+    const { fromChain, toChain, from, to, nft, id, depositHash } = data || {};
 
     return (
       NFTTransaction.hasValidLength(data, 7) &&
