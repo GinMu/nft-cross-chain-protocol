@@ -13,7 +13,7 @@ NFT 从以太坊跨链到井通
 
 ```javascript
 import { NFTDao } from "@jccdex/ethereum-contract";
-import { NFTTransaction } from "@jccdex/nft-cross-chain-protocol";
+import NFTTransaction from "@jccdex/nft-cross-chain-protocol";
 
 const options = {
   account: ethereum.selectedAddress,
