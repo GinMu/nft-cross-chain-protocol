@@ -70,7 +70,7 @@ NFT 从井通跨链到以太坊
 2. 用户调用 submitWithdrawOrder 支付 0.0075 jeth 作为手续费到井通 721 银关地址，附带相关跨链信息。
 
 ```javascript
-import { NFTTransaction } from "@jccdex/nft-cross-chain-protocol";
+import NFTTransaction from "@jccdex/nft-cross-chain-protocol";
 
 const jingtumNft = "井通NFT银关地址";
 // 井通rpc节点数组
