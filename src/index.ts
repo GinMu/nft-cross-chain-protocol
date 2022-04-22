@@ -5,6 +5,9 @@ import { ethWallet } from "jcc_wallet";
 import { IDepositOrder, IWithdrawOrder } from "./types/transaction";
 import { Transaction } from "@jccdex/jingtum-lib";
 import { IToken } from "@jccdex/grid-protocol/lib/types/common";
+import { ITransfer, IParsedTransfer } from "@jccdex/grid-protocol/lib/types/transaction";
+import { convertTime, convertMemo } from "@jccdex/grid-protocol/lib/util";
+
 import NFTCrossChainDB, { NFTDateDB } from "./db/nft-cross-chain-db";
 
 export { NFTCrossChainDB, NFTDateDB };
@@ -17,6 +20,15 @@ export default class NFTTransaction {
     return /^(0x)?[a-f0-9]{64}$/gi.test(value);
   }
 
+  public static parseTransaction(transaction: ITransfer): IParsedTransfer {
+    const tx: any = Object.assign({}, transaction);
+    const memos = tx.memos;
+    delete tx.memos;
+    tx.time = convertTime(tx.time);
+    tx.memo = convertMemo(memos);
+
+    return tx as IParsedTransfer;
+  }
   public static hasValidLength(memo, len: number): boolean {
     if (!isDef(memo)) {
       return false;
