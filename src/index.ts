@@ -5,9 +5,9 @@ import { ethWallet } from "jcc_wallet";
 import { IDepositOrder, IWithdrawOrder } from "./types/transaction";
 import { Transaction } from "@jccdex/jingtum-lib";
 import { IToken } from "@jccdex/grid-protocol/lib/types/common";
-import NFTCrossChainDB from "./db/nft-cross-chain-db";
+import NFTCrossChainDB, { NFTDateDB } from "./db/nft-cross-chain-db";
 
-export { NFTCrossChainDB };
+export { NFTCrossChainDB, NFTDateDB };
 
 export default class NFTTransaction {
   public static SWT = "SWTC";

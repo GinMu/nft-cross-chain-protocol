@@ -3,8 +3,39 @@ import { JSONFile } from "@commonify/lowdb";
 import { IParsedTransfer } from "@jccdex/grid-protocol/lib/types/transaction";
 import { string2json } from "@jccdex/grid-protocol/lib/util";
 import LowWithLodash from "./low";
-import { ICrossChainTable } from "../types/db";
+import { ICrossChainTable, ICrossChainDate } from "../types/db";
 import { IOrderMemo } from "../types/memo";
+
+export class NFTDateDB {
+  protected adapter;
+  public db: LowWithLodash<ICrossChainDate>;
+
+  constructor(file: string) {
+    this.adapter = new JSONFile(file);
+    this.db = new LowWithLodash<ICrossChainDate>(this.adapter);
+  }
+
+  public initData() {
+    this.db.data = Object.assign(
+      {
+        latest: null
+      },
+      this.db.data
+    );
+  }
+
+  public updateLatest(value: string) {
+    this.db.data.latest = value;
+  }
+
+  public getDate(): string | null {
+    return this.db.chain.get("latest").value();
+  }
+
+  async write() {
+    await this.db.write();
+  }
+}
 
 export default class NFTCrossChainDB {
   public db: LowWithLodash<ICrossChainTable>;
@@ -18,7 +49,6 @@ export default class NFTCrossChainDB {
   public initData() {
     this.db.data = Object.assign(
       {
-        latest: null,
         orders: [],
         executedOrders: [],
         canceledOrders: []
@@ -79,10 +109,6 @@ export default class NFTCrossChainDB {
       .value();
 
     return data;
-  }
-
-  public updateLatest(value: string) {
-    this.db.data.latest = value;
   }
 
   async write() {
