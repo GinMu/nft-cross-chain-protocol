@@ -4,6 +4,7 @@ import { isDef } from "@jccdex/grid-protocol/lib/util";
 import { ethWallet } from "jcc_wallet";
 import { IDepositOrder, IWithdrawOrder } from "./types/transaction";
 import { Transaction } from "@jccdex/jingtum-lib";
+import { IToken } from "@jccdex/grid-protocol/lib/types/common";
 export default class NFTTransaction {
   public static SWT = "SWTC";
   public static ETHEREUM = "ETH";
@@ -19,7 +20,31 @@ export default class NFTTransaction {
     return Object.keys(memo).length === len;
   }
 
-  public static isDepositOrder(data): boolean {
+  public static isSend(type: string): boolean {
+    return type === "Send";
+  }
+
+  public static isReceive(type: string): boolean {
+    return type === "Receive";
+  }
+
+  public static isSuccess(v: string): boolean {
+    return v === "tesSUCCESS";
+  }
+
+  public static isNativeToken(token: IToken): boolean {
+    return (token.currency.toUpperCase() === "SWT" || token.currency.toUpperCase() === "SWTC") && token.issuer === "";
+  }
+
+  /**
+   * 检查是否是 eth -> swtc 订单报文
+   *
+   * @static
+   * @param {*} data
+   * @returns {boolean}
+   * @memberof NFTTransaction
+   */
+  public static isDeposit(data): boolean {
     const { fromChain, toChain, from, to, nft, id, depositHash } = data || {};
 
     return (
@@ -34,7 +59,44 @@ export default class NFTTransaction {
     );
   }
 
-  public static isWithdrawOrder(data): boolean {
+  /**
+   * 检查是否是 eth -> swtc 订单执行报文
+   *
+   * @static
+   * @param {*} data
+   * @returns {boolean}
+   * @memberof NFTTransaction
+   */
+  public static isExecutedDeposit(data): boolean {
+    const { fromChain, toChain, from, to, nft, id, depositHash, withdrawHash } = data || {};
+    return (
+      NFTTransaction.isDeposit({ fromChain, toChain, from, to, nft, id, depositHash }) &&
+      NFTTransaction.isHash(withdrawHash)
+    );
+  }
+
+  /**
+   * 检查是否是 eth -> swtc 订单取消报文
+   *
+   * @static
+   * @param {*} data
+   * @returns {boolean}
+   * @memberof NFTTransaction
+   */
+  public static isCanceledDeposit(data): boolean {
+    const { fromChain, toChain, from, to, nft, id, depositHash, status } = data || {};
+    return NFTTransaction.isDeposit({ fromChain, toChain, from, to, nft, id, depositHash }) && status === "cancel";
+  }
+
+  /**
+   * 检查是否是 swtc -> eth 订单报文
+   *
+   * @static
+   * @param {*} data
+   * @returns {boolean}
+   * @memberof NFTTransaction
+   */
+  public static isWithdraw(data): boolean {
     const { fromChain, toChain, from, to, nft, id, depositHash } = data || {};
 
     return (
@@ -47,6 +109,35 @@ export default class NFTTransaction {
       isDef(id) &&
       NFTTransaction.isHash(depositHash)
     );
+  }
+
+  /**
+   * 检查是否是 swtc -> eth 订单执行报文
+   *
+   * @static
+   * @param {*} data
+   * @returns {boolean}
+   * @memberof NFTTransaction
+   */
+  public static isExecutedWithdraw(data): boolean {
+    const { fromChain, toChain, from, to, nft, id, depositHash, withdrawHash } = data || {};
+    return (
+      NFTTransaction.isWithdraw({ fromChain, toChain, from, to, nft, id, depositHash }) &&
+      NFTTransaction.isHash(withdrawHash)
+    );
+  }
+
+  /**
+   * 检查是否是 swtc -> eth 订单取消报文
+   *
+   * @static
+   * @param {*} data
+   * @returns {boolean}
+   * @memberof NFTTransaction
+   */
+  public static isCanceledWithdraw(data): boolean {
+    const { fromChain, toChain, from, to, nft, id, depositHash, status } = data || {};
+    return NFTTransaction.isWithdraw({ fromChain, toChain, from, to, nft, id, depositHash }) && status === "cancel";
   }
 
   private nftFingate: string;
@@ -94,7 +185,7 @@ export default class NFTTransaction {
       id,
       depositHash
     };
-    invariant(NFTTransaction.isDepositOrder(memo), "The deposit order is not valid!");
+    invariant(NFTTransaction.isDeposit(memo), "The deposit order is not valid!");
 
     const hash = await this.transaction.transfer(
       address,
@@ -127,7 +218,7 @@ export default class NFTTransaction {
       id,
       depositHash
     };
-    invariant(NFTTransaction.isWithdrawOrder(memo), "The withdraw order is not valid!");
+    invariant(NFTTransaction.isWithdraw(memo), "The withdraw order is not valid!");
 
     const hash = await this.transaction.transfer(
       address,
