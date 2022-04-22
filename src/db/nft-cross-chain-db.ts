@@ -24,6 +24,11 @@ export class NFTDateDB {
     );
   }
 
+  public async read() {
+    await this.db.read();
+    this.initData();
+  }
+
   public updateLatest(value: string) {
     this.db.data.latest = value;
   }
