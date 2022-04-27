@@ -7,7 +7,6 @@ import { Transaction } from "@jccdex/jingtum-lib";
 import { IToken } from "@jccdex/grid-protocol/lib/types/common";
 import { ITransfer, IParsedTransfer } from "@jccdex/grid-protocol/lib/types/transaction";
 import { convertTime, convertMemo } from "@jccdex/grid-protocol/lib/util";
-
 import NFTCrossChainDB, { NFTDateDB } from "./db/nft-cross-chain-db";
 
 export { NFTCrossChainDB, NFTDateDB };
@@ -113,16 +112,17 @@ export default class NFTTransaction {
    * @memberof NFTTransaction
    */
   public static isWithdraw(data): boolean {
-    const { fromChain, toChain, from, to, nft, id, depositHash } = data || {};
+    const { fromChain, toChain, from, to, publisher, id, fundCode, depositHash } = data || {};
 
     return (
-      NFTTransaction.hasValidLength(data, 7) &&
+      NFTTransaction.hasValidLength(data, 8) &&
       fromChain === NFTTransaction.SWT &&
       toChain === NFTTransaction.ETHEREUM &&
       wallet.isValidAddress(from) &&
       ethWallet.isValidAddress(to) &&
-      wallet.isValidAddress(nft) &&
-      isDef(id) &&
+      wallet.isValidAddress(publisher) &&
+      isDef(fundCode) &&
+      NFTTransaction.isHash(id) &&
       NFTTransaction.isHash(depositHash)
     );
   }
@@ -136,9 +136,9 @@ export default class NFTTransaction {
    * @memberof NFTTransaction
    */
   public static isExecutedWithdraw(data): boolean {
-    const { fromChain, toChain, from, to, nft, id, depositHash, withdrawHash } = data || {};
+    const { fromChain, toChain, from, to, publisher, id, fundCode, depositHash, withdrawHash } = data || {};
     return (
-      NFTTransaction.isWithdraw({ fromChain, toChain, from, to, nft, id, depositHash }) &&
+      NFTTransaction.isWithdraw({ fromChain, toChain, from, to, publisher, fundCode, id, depositHash }) &&
       NFTTransaction.isHash(withdrawHash)
     );
   }
@@ -152,8 +152,11 @@ export default class NFTTransaction {
    * @memberof NFTTransaction
    */
   public static isCanceledWithdraw(data): boolean {
-    const { fromChain, toChain, from, to, nft, id, depositHash, status } = data || {};
-    return NFTTransaction.isWithdraw({ fromChain, toChain, from, to, nft, id, depositHash }) && status === "cancel";
+    const { fromChain, toChain, from, to, publisher, id, fundCode, depositHash, status } = data || {};
+    return (
+      NFTTransaction.isWithdraw({ fromChain, toChain, from, to, publisher, fundCode, id, depositHash }) &&
+      status === "cancel"
+    );
   }
 
   private nftFingate: string;
@@ -223,15 +226,16 @@ export default class NFTTransaction {
    * @memberof NFTTransaction
    */
   public async submitWithdrawOrder(data: IWithdrawOrder): Promise<string> {
-    const { address, secret, to, nft, id, depositHash } = data;
+    const { address, secret, to, publisher, fundCode, tokenId, depositHash } = data;
 
     const memo = {
       fromChain: NFTTransaction.SWT,
       toChain: NFTTransaction.ETHEREUM,
       from: address,
       to,
-      nft,
-      id,
+      publisher,
+      fundCode,
+      id: tokenId,
       depositHash
     };
     invariant(NFTTransaction.isWithdraw(memo), "The withdraw order is not valid!");

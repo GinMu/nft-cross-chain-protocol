@@ -28,11 +28,14 @@ export interface IWithdrawOrder {
   // 以太坊地址
   to: string;
 
-  // nft井通合约地址
-  nft: string;
+  // 井通nft发行方地址
+  publisher: string;
 
-  // nft id
-  id: string | number;
+  // 井通nft fund code
+  fundCode: string;
+
+  // 井通nft token id
+  tokenId: string;
 
   // 用户在井通上721转账hash
   depositHash: string;
