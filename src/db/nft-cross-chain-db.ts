@@ -4,7 +4,7 @@ import { IParsedTransfer } from "@jccdex/grid-protocol/lib/types/transaction";
 import { string2json } from "@jccdex/grid-protocol/lib/util";
 import LowWithLodash from "./low";
 import { ICrossChainTable, ICrossChainDate } from "../types/db";
-import { IOrderMemo } from "../types/memo";
+import { IDepositMemo, IWithdrawMemo } from "../types/memo";
 
 export class NFTDateDB {
   protected adapter;
@@ -74,7 +74,7 @@ export default class NFTCrossChainDB {
     this.insert("canceledOrders", txs);
   }
 
-  public findExecutedOrder(order: IOrderMemo) {
+  public findDepositExecutedOrder(order: IDepositMemo) {
     const data = this.db.chain
       .get("executedOrders")
       .find((o) => {
@@ -95,7 +95,7 @@ export default class NFTCrossChainDB {
     return data;
   }
 
-  public findCanceledOrder(order: IOrderMemo) {
+  public findDepositCanceledOrder(order: IDepositMemo) {
     const data = this.db.chain
       .get("canceledOrders")
       .find((o) => {
@@ -108,6 +108,50 @@ export default class NFTCrossChainDB {
           memo.to === to &&
           memo.nft === nft &&
           memo.id === id &&
+          memo.depositHash === depositHash
+        );
+      })
+      .value();
+
+    return data;
+  }
+
+  public findWithdrawExecutedOrder(order: IWithdrawMemo) {
+    const data = this.db.chain
+      .get("executedOrders")
+      .find((o) => {
+        const memo = o.memo || {};
+        const { fromChain, toChain, from, to, publisher, id, fundCode, depositHash } = order || {};
+        return (
+          memo.fromChain === fromChain &&
+          memo.toChain === toChain &&
+          memo.from === from &&
+          memo.to === to &&
+          memo.publisher === publisher &&
+          memo.id === id &&
+          memo.fundCode === fundCode &&
+          memo.depositHash === depositHash
+        );
+      })
+      .value();
+
+    return data;
+  }
+
+  public findWithdrawCanceledOrder(order: IWithdrawMemo) {
+    const data = this.db.chain
+      .get("canceledOrders")
+      .find((o) => {
+        const memo = o.memo;
+        const { fromChain, toChain, from, to, publisher, id, fundCode, depositHash } = order || {};
+        return (
+          memo.fromChain === fromChain &&
+          memo.toChain === toChain &&
+          memo.from === from &&
+          memo.to === to &&
+          memo.publisher === publisher &&
+          memo.id === id &&
+          memo.fundCode === fundCode &&
           memo.depositHash === depositHash
         );
       })
