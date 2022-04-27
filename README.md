@@ -41,23 +41,20 @@ const nodes = [""];
 const nftTransaction = new NFTTransaction(jingtumNft, nodes);
 
 const depositData = {
+  from: "用户以太坊地址",
 
-  from: "用户以太坊地址";
+  address: "用户井通地址",
 
-  address: "用户井通地址";
+  secret: "用户井通密钥",
 
-  secret: "用户井通密钥";
+  nft: "以太坊nft合约地址",
 
-  nft: "以太坊nft合约地址";
+  id: "以太坊nft id",
 
-  id: "以太坊nft id";
-
-  depositHash: "上述deposit交易hash";
-}
+  depositHash: "上述deposit交易hash"
+};
 
 const hash = await nftTransaction.submitDepositOrder(depositData);
-
-
 ```
 
 ## SWTC -> ETH
@@ -83,24 +80,21 @@ const id = "";
 
 const hash721 = await nftTransaction.transfer721(address, secret, id);
 
-
 const withdrawData = {
+  address: "用户井通地址",
 
+  secret: "用户井通密钥",
 
-  address: "用户井通地址";
+  to: "用户以太坊地址",
 
-  secret: "用户井通密钥";
+  publisher: "井通nft发行方地址",
 
-  to: "用户以太坊地址";
+  tokenId: "井通nft token id",
 
-  nft: "井通nft发行方地址";
+  fundCode: "井通nft fund code",
 
-  id: "井通nft id";
-
-  depositHash: "上述transfer721 hash";
-}
+  depositHash: "上述transfer721 hash"
+};
 
 const hash = await nftTransaction.submitWithdrawOrder(withdrawData);
-
-
 ```
