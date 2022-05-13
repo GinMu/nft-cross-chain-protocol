@@ -77,7 +77,7 @@ const nodes = [""];
 const fee = {
   currency: "JETH",
   value: "0.0075",
-  issuer: "jL8QQW6Z8DxZTpWYkLctG55NK9jZE4RYSv"
+  issuer: "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
 };
 
 // 主链fee可不设
