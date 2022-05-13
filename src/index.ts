@@ -4,7 +4,7 @@ import { isDef } from "@jccdex/grid-protocol/lib/util";
 import { ethWallet } from "jcc_wallet";
 import { IDepositOrder, IWithdrawOrder } from "./types/transaction";
 import { Transaction } from "@jccdex/jingtum-lib";
-import { IToken } from "@jccdex/grid-protocol/lib/types/common";
+import { IToken, IAmount } from "@jccdex/grid-protocol/lib/types/common";
 import { ITransfer, IParsedTransfer } from "@jccdex/grid-protocol/lib/types/transaction";
 import { convertTime, convertMemo } from "@jccdex/grid-protocol/lib/util";
 import NFTCrossChainDB, { NFTDateDB } from "./db/nft-cross-chain-db";
@@ -168,22 +168,24 @@ export default class NFTTransaction {
     issuer: ""
   };
 
-  private fee = {
-    currency: "JETH",
-    value: "0.0075",
-    issuer: "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
-  };
+  private fee: IAmount;
 
   /**
    * Creates an instance of NFTTransaction.
    * @param {string} nftFingate 井通nft银关地址
    * @param {string[]} nodes 井通rpc节点
+   * @param {IAmount} [fee] 提币手续费
    * @memberof NFTTransaction
    */
-  constructor(nftFingate: string, nodes: string[]) {
+  constructor(nftFingate: string, nodes: string[], fee?: IAmount) {
     invariant(wallet.isValidAddress(nftFingate), "jingtum nft fingate is not valid!");
     this.nftFingate = nftFingate;
     this.transaction = new Transaction("jingtum", nodes, 0);
+    this.fee = fee || {
+      currency: "JETH",
+      value: "0.0075",
+      issuer: "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
+    };
   }
 
   /**
