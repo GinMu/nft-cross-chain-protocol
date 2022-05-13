@@ -72,7 +72,22 @@ import NFTTransaction from "@jccdex/nft-cross-chain-protocol";
 const jingtumNft = "井通NFT银关地址";
 // 井通rpc节点数组
 const nodes = [""];
-const nftTransaction = new NFTTransaction(jingtumNft, nodes);
+
+// 测试链手续费
+const fee = {
+  currency: "JETH",
+  value: "0.0075",
+  issuer: "jL8QQW6Z8DxZTpWYkLctG55NK9jZE4RYSv"
+};
+
+// 主链fee可不设
+// 主链默认手续费
+// {
+//     currency: "JETH",
+//     value: "0.0075",
+//     issuer: "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or"
+// }
+const nftTransaction = new NFTTransaction(jingtumNft, nodes, fee);
 
 const address = "";
 const secret = "";
