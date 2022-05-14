@@ -83,11 +83,11 @@ export default class NFTCrossChainDB {
         return (
           memo.fromChain === fromChain &&
           memo.toChain === toChain &&
-          memo.from === from &&
-          memo.to === to &&
-          memo.nft === nft &&
+          memo.from.toLowerCase() === from.toLowerCase() &&
+          memo.to.toLowerCase() === to.toLowerCase() &&
+          memo.nft.toLowerCase() === nft.toLowerCase() &&
           memo.id === id &&
-          memo.depositHash === depositHash
+          memo.depositHash.toLowerCase() === depositHash.toLowerCase()
         );
       })
       .value();
@@ -104,11 +104,11 @@ export default class NFTCrossChainDB {
         return (
           memo.fromChain === fromChain &&
           memo.toChain === toChain &&
-          memo.from === from &&
-          memo.to === to &&
-          memo.nft === nft &&
+          memo.from.toLowerCase() === from.toLowerCase() &&
+          memo.to.toLowerCase() === to.toLowerCase() &&
+          memo.nft.toLowerCase() === nft.toLowerCase() &&
           memo.id === id &&
-          memo.depositHash === depositHash
+          memo.depositHash.toLowerCase() === depositHash.toLowerCase()
         );
       })
       .value();
@@ -125,12 +125,12 @@ export default class NFTCrossChainDB {
         return (
           memo.fromChain === fromChain &&
           memo.toChain === toChain &&
-          memo.from === from &&
-          memo.to === to &&
-          memo.publisher === publisher &&
+          memo.from.toLowerCase() === from.toLowerCase() &&
+          memo.to.toLowerCase() === to.toLowerCase() &&
+          memo.publisher.toLowerCase() === publisher.toLowerCase() &&
           memo.id === id &&
           memo.fundCode === fundCode &&
-          memo.depositHash === depositHash
+          memo.depositHash.toLowerCase() === depositHash.toLowerCase()
         );
       })
       .value();
@@ -147,12 +147,12 @@ export default class NFTCrossChainDB {
         return (
           memo.fromChain === fromChain &&
           memo.toChain === toChain &&
-          memo.from === from &&
-          memo.to === to &&
-          memo.publisher === publisher &&
+          memo.from.toLowerCase() === from.toLowerCase() &&
+          memo.to.toLowerCase() === to.toLowerCase() &&
+          memo.publisher.toLowerCase() === publisher.toLowerCase() &&
           memo.id === id &&
           memo.fundCode === fundCode &&
-          memo.depositHash === depositHash
+          memo.depositHash.toLowerCase() === depositHash.toLowerCase()
         );
       })
       .value();
