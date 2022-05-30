@@ -1,6 +1,6 @@
 {
   "name": "@jccdex/nft-cross-chain-protocol",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "nft crosss chain protocol",
   "main": "lib/index.js",
   "scripts": {
