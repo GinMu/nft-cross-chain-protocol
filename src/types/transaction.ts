@@ -1,4 +1,10 @@
 export interface IDepositOrder {
+  // 跨链的发起链
+  fromChain: string;
+
+  // 跨链的目的链
+  toChain: string;
+
   // 用户以太坊地址
   from: string;
 
@@ -19,6 +25,12 @@ export interface IDepositOrder {
 }
 
 export interface IWithdrawOrder {
+  // 跨链的发起链
+  fromChain: string;
+
+  // 跨链的目的链
+  toChain: string;
+
   // 用户井通地址
   address: string;
 

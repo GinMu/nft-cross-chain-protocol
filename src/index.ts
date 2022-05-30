@@ -14,6 +14,7 @@ export { NFTCrossChainDB, NFTDateDB };
 export default class NFTTransaction {
   public static SWT = "SWTC";
   public static ETHEREUM = "ETH";
+  public static POLYGON = "POLYGON";
 
   public static isHash(value): boolean {
     return /^(0x)?[a-f0-9]{64}$/gi.test(value);
@@ -51,6 +52,13 @@ export default class NFTTransaction {
     return (token.currency.toUpperCase() === "SWT" || token.currency.toUpperCase() === "SWTC") && token.issuer === "";
   }
 
+  public static isSWTC(chain: string): boolean {
+    return chain === NFTTransaction.SWT;
+  }
+  public static notSWTC(chain: string): boolean {
+    return chain === NFTTransaction.ETHEREUM || chain === NFTTransaction.POLYGON;
+  }
+
   /**
    * 检查是否是 eth -> swtc 订单报文
    *
@@ -64,8 +72,8 @@ export default class NFTTransaction {
 
     return (
       NFTTransaction.hasValidLength(data, 7) &&
-      fromChain === NFTTransaction.ETHEREUM &&
-      toChain === NFTTransaction.SWT &&
+      NFTTransaction.notSWTC(fromChain) &&
+      NFTTransaction.isSWTC(toChain) &&
       ethWallet.isValidAddress(from) &&
       wallet.isValidAddress(to) &&
       ethWallet.isValidAddress(nft) &&
@@ -116,8 +124,8 @@ export default class NFTTransaction {
 
     return (
       NFTTransaction.hasValidLength(data, 8) &&
-      fromChain === NFTTransaction.SWT &&
-      toChain === NFTTransaction.ETHEREUM &&
+      NFTTransaction.isSWTC(fromChain) &&
+      NFTTransaction.notSWTC(toChain) &&
       wallet.isValidAddress(from) &&
       ethWallet.isValidAddress(to) &&
       wallet.isValidAddress(publisher) &&
@@ -196,10 +204,10 @@ export default class NFTTransaction {
    * @memberof NFTTransaction
    */
   public async submitDepositOrder(data: IDepositOrder) {
-    const { from, address, secret, nft, id, depositHash } = data;
+    const { fromChain, toChain, from, address, secret, nft, id, depositHash } = data;
     const memo = {
-      fromChain: NFTTransaction.ETHEREUM,
-      toChain: NFTTransaction.SWT,
+      fromChain,
+      toChain,
       from,
       to: address,
       nft,
@@ -228,11 +236,11 @@ export default class NFTTransaction {
    * @memberof NFTTransaction
    */
   public async submitWithdrawOrder(data: IWithdrawOrder): Promise<string> {
-    const { address, secret, to, publisher, fundCode, tokenId, depositHash } = data;
+    const { fromChain, toChain, address, secret, to, publisher, fundCode, tokenId, depositHash } = data;
 
     const memo = {
-      fromChain: NFTTransaction.SWT,
-      toChain: NFTTransaction.ETHEREUM,
+      fromChain,
+      toChain,
       from: address,
       to,
       publisher,
